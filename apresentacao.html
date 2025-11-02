@@ -1,0 +1,457 @@
+<!-- # Generate a mobile-first, ultra-clean, single-file HTML deck optimized for small screens.
+# Features: swipe/tap navigation, large typography, progressive disclosure, minimal UI chrome,
+# 1–2 lines per slide, optional "mais" expander for details, dark/light toggle, hash deep-links.
+mobile_html = r""" -->
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>CAMIM • Situações Delicadas — Mobile</title>
+    <meta name="theme-color" content="#0b6b6f">
+    <style>
+        :root {
+            --brand: #0b6b6f;
+            /* ajuste paleta CAMIM */
+            --ink: #0f172a;
+            --muted: #475569;
+            --bg: #ffffff;
+            --soft: #f1f5f9;
+            --touch: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial
+        }
+
+        /* Layout mobile-first com snap vertical para conforto de leitura */
+        .deck {
+            height: 100%;
+            scroll-snap-type: y mandatory;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch
+        }
+
+        .slide {
+            min-height: 100%;
+            scroll-snap-align: start;
+            padding: max(5vh, 28px) max(4vw, 16px) max(8vh, 32px);
+            display: flex;
+            flex-direction: column;
+            gap: min(3vh, 20px)
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, var(--brand), #0e878c);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 700
+        }
+
+        .h1 {
+            font-size: clamp(22px, 5.6vw, 34px);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.01em
+        }
+
+        .h2 {
+            font-size: clamp(18px, 4.6vw, 26px);
+            line-height: 1.2;
+            font-weight: 700
+        }
+
+        .p {
+            font-size: clamp(14px, 3.7vw, 18px);
+            color: var(--muted)
+        }
+
+        .bullets {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .bullets .item {
+            background: var(--soft);
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: clamp(14px, 3.8vw, 18px)
+        }
+
+        .cta {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            appearance: none;
+            border: none;
+            background: var(--brand);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px
+        }
+
+        .btn.ghost {
+            background: transparent;
+            color: var(--brand);
+            border: 1px solid var(--brand)
+        }
+
+        .meta {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        /* barra fixa minimalista */
+        .nav {
+            position: fixed;
+            inset: auto 0 0 0;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px env(safe-area-inset-bottom);
+            background: rgba(255, 255, 255, .96);
+            border-top: 1px solid #e2e8f0;
+            backdrop-filter: saturate(180%) blur(10px)
+        }
+
+        .tap {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px
+        }
+
+        .kb {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #cbd5e1
+        }
+
+        .dot[aria-current="true"] {
+            background: var(--brand)
+        }
+
+        .ctrl {
+            display: flex;
+            gap: 10px
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #fff
+        }
+
+        .hidden {
+            display: none
+        }
+
+        /* expander minimal */
+        .details {
+            background: var(--soft);
+            padding: 12px;
+            border-radius: 12px
+        }
+
+        details {
+            font-size: clamp(14px, 3.6vw, 18px)
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 700;
+            list-style: none
+        }
+
+        summary::-webkit-details-marker {
+            display: none
+        }
+
+        /* dark mode toggle */
+        .dark {
+            --bg: #0b1220;
+            --ink: #e5e7eb;
+            --muted: #94a3b8;
+            --soft: #0f172a;
+            --brand: #22c55e
+        }
+
+        @media (min-width:800px) {
+
+            /* modo palco para desktop */
+            .slide {
+                max-width: 700px;
+                margin: 0 auto
+            }
+        }
+
+        @media print {
+            .nav {
+                display: none !important
+            }
+
+            .slide {
+                page-break-after: always
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="deck" id="deck" aria-roledescription="apresentação">
+
+        <!-- 1 -->
+
+        <section class="slide" data-title="Objetivo">
+
+            <div class="h1">Situações estressantes na recepção e portaria</div>
+            <div class="p">Empatia prática e de-escalation para Recepção das clínicas.</div>
+            <div class="bullets">
+                <div class="item">Outcome: menos incidentes N2+, mais FCR, menor tempo em incerteza.</div>
+            </div>
+            <div class="cta"><button class="btn" id="start">Começar</button><button class="btn ghost"
+                    id="theme">Tema</button></div>
+            <div class="meta">Swipe para avançar • Toque duplo avança • #hash para link direto</div>
+        </section>
+        <!-- 2 -->
+        <section class="slide" data-title="Drivers">
+            <div class="h2">Por que o atrito acontece</div>
+            <div class="bullets">
+                <div class="item">Picos de demanda e SLA irreal → foco em throughput</div>
+                <div class="item">“Acolher + policiar regra” → conflito de papéis</div>
+                <div class="item">Baixa autonomia e sistemas lentos → frustração</div>
+            </div>
+            <details class="details">
+                <summary>Mais</summary>
+                Regra: segurança primeiro, empatia de 60–90s e alternativas concretas.
+            </details>
+        </section>
+        <!-- 3 -->
+        <section class="slide" data-title="REAGIR">
+            <div class="h2">Protocolo REAGIR (2–3 min)</div>
+            <div class="bullets">
+                <div class="item"><strong>R</strong>eceber e nomear a emoção</div>
+                <div class="item"><strong>E</strong>xplicar contexto e regra</div>
+                <div class="item"><strong>A</strong>presentar duas opções viáveis</div>
+                <div class="item"><strong>G</strong>arantir tempo e próximo passo</div>
+                <div class="item"><strong>IR</strong> registrar e, se necessário, escalar</div>
+            </div>
+        </section>
+        <!-- 4 -->
+        <section class="slide" data-title="Scripts">
+            <div class="h2">Scripts rápidos</div>
+            <div class="bullets">
+                <div class="item"><strong>Acolhimento</strong>: “Bom dia, meu nome é __. Como posso ajudar?”</div>
+                <div class="item"><strong>Regra</strong>: “Para manter todos seguros, preciso __. Posso oferecer X ou
+                    Y.”</div>
+                <div class="item"><strong>Negativa</strong>: “Não posso liberar sem __. Alternativas: __ / __.”</div>
+                <div class="item"><strong>Fechamento</strong>: “Aguarde na área A. Chamada em ~__ min.”</div>
+            </div>
+        </section>
+        <!-- 5 -->
+        <section class="slide" data-title="Limites">
+            <div class="h2">Limites e proibidos</div>
+            <div class="bullets">
+                <div class="item">Respeito é inegociável. Ofensa encerra atendimento.</div>
+                <div class="item">Sem sarcasmo, promessas fora de controle ou contato físico.</div>
+            </div>
+        </section>
+        <!-- 6 -->
+        <section class="slide" data-title="Escalonamento">
+            <div class="h2">Matriz de escalonamento</div>
+            <div class="bullets">
+                <div class="item"><strong>N1</strong>: aplicar REAGIR, oferecer 2 opções, registrar.</div>
+                <div class="item"><strong>N2</strong>: chamar líder em até 3 min. Limite de respeito.</div>
+                <div class="item"><strong>N3</strong>: interromper, acionar segurança, gerente.</div>
+                <div class="item"><strong>N4</strong>: protocolo de segurança e autoridades.</div>
+            </div>
+        </section>
+        <!-- 7 -->
+        <section class="slide" data-title="Autonomia">
+            <div class="h2">Guardrails de autonomia</div>
+            <div class="bullets">
+                <div class="item">Atraso ≤ 15 min sem reautorização. Acima disso, reencaixe.</div>
+                <div class="item">Doc faltante → D+1 com bloqueio condicional.</div>
+                <div class="item">Fila prioritária conforme lei e política.</div>
+                <div class="item">Acesso restrito: negar, explicar, oferecer atualização.</div>
+            </div>
+        </section>
+        <!-- 8 -->
+        <section class="slide" data-title="Pós-incidente">
+            <div class="h2">Pós-incidente</div>
+            <div class="bullets">
+                <div class="item">Registrar em 10 min: nível, fatos, ações.</div>
+                <div class="item">Debrief 10 min no dia. N2+ avisar gerente em 2 h.</div>
+                <div class="item">Contramedidas em 5 dias úteis se sistêmico.</div>
+            </div>
+        </section>
+        <!-- 9 -->
+        <section class="slide" data-title="Ambiente">
+            <div class="h2">Ambiente e sinalização</div>
+            <div class="bullets">
+                <div class="item">Wayfinding claro. Painel de espera com tempo e motivo.</div>
+                <div class="item">Água, assentos, acústica. Regras de Convivência visíveis.</div>
+            </div>
+        </section>
+        <!-- 10 -->
+        <section class="slide" data-title="Métricas">
+            <div class="h2">Métricas de governança</div>
+            <div class="bullets">
+                <div class="item">FCR, CSAT/turno, Incidentes/1k, Tempo em incerteza.</div>
+                <div class="item">Espera informada vs real. Absenteísmo e rotatividade.</div>
+            </div>
+        </section>
+        <!-- 11 -->
+        <section class="slide" data-title="Plano">
+            <div class="h2">Plano 30–60–90</div>
+            <div class="bullets">
+                <div class="item"><strong>0–30</strong>: scripts, role-play, políticas, baseline.</div>
+                <div class="item"><strong>31–60</strong>: simulados, ajustar guardrails, painel.</div>
+                <div class="item"><strong>61–90</strong>: mentoria, reconhecimento, auditoria.</div>
+            </div>
+        </section>
+        <!-- 12 -->
+        <section class="slide" data-title="Cartão">
+            <div class="h2">Cartão REAGIR</div>
+            <div class="bullets">
+                <div class="item">Receber e nomear • Explicar regra • Oferecer 2 opções</div>
+                <div class="item">Garantir tempo/próximo passo • Registrar/escalar</div>
+            </div>
+            <div class="p">Frase-chave: “Quero te ajudar. Se alinharmos respeito, resolvemos já.”</div>
+        </section>
+    </div>
+
+    <!-- barra fixa -->
+    <div class="nav" role="toolbar" aria-label="Navegação">
+        <div class="ctrl"><button class="icon" id="prev" aria-label="Anterior">❮</button></div>
+        <div class="tap"><span class="kb">Toque duplo / swipe</span>
+            <div id="dots" aria-hidden="true"></div>
+        </div>
+        <div class="ctrl">
+            <button class="icon" id="theme2" aria-label="Tema">☾</button>
+            <button class="icon" id="share" aria-label="Compartilhar">⤴</button>
+            <button class="icon" id="next" aria-label="Próximo">❯</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const deck = document.getElementById('deck');
+            const slides = Array.from(deck.children);
+            const prev = document.getElementById('prev');
+            const next = document.getElementById('next');
+            const theme = document.getElementById('theme');
+            const theme2 = document.getElementById('theme2');
+            const share = document.getElementById('share');
+            const dots = document.getElementById('dots');
+            const startBtn = document.getElementById('start');
+
+            function activeIndex() {
+                const y = deck.scrollTop;
+                const h = deck.clientHeight;
+                return Math.round(y / h);
+            }
+            function go(i) {
+                const idx = Math.max(0, Math.min(slides.length - 1, i));
+                deck.scrollTo({ top: idx * deck.clientHeight, behavior: 'smooth' });
+                history.replaceState(null, '', '#' + (idx + 1));
+                renderDots(idx);
+            }
+            function renderDots(idx) {
+                dots.innerHTML = '';
+                slides.forEach((_, i) => {
+                    const d = document.createElement('span');
+                    d.className = 'dot';
+                    if (i === idx) d.setAttribute('aria-current', 'true');
+                    dots.appendChild(d);
+                });
+            }
+            function toggleTheme() {
+                document.body.classList.toggle('dark');
+            }
+            function shareDeck() {
+                const url = location.href.split('#')[0];
+                if (navigator.share) {
+                    navigator.share({ title: document.title, url }).catch(() => { });
+                } else {
+                    prompt('Copie o link da apresentação:', url);
+                }
+            }
+            // gestures
+            let touchStartY = 0, touchStartX = 0, lastTap = 0;
+            deck.addEventListener('touchstart', e => {
+                const t = e.changedTouches[0];
+                touchStartY = t.clientY;
+                touchStartX = t.clientX;
+            }, { passive: true });
+            deck.addEventListener('touchend', e => {
+                const t = e.changedTouches[0];
+                const dy = t.clientY - touchStartY;
+                const dx = t.clientX - touchStartX;
+                const absY = Math.abs(dy), absX = Math.abs(dx);
+                const now = Date.now();
+                // double tap to next
+                if (now - lastTap < 300) { go(activeIndex() + 1); lastTap = 0; return; }
+                lastTap = now;
+                // vertical swipe
+                if (absY > 40 && absY > absX) { if (dy < 0) go(activeIndex() + 1); else go(activeIndex() - 1); }
+            }, { passive: true });
+
+            prev.addEventListener('click', () => go(activeIndex() - 1));
+            next.addEventListener('click', () => go(activeIndex() + 1));
+            (theme || theme2).addEventListener('click', toggleTheme);
+            theme2.addEventListener('click', toggleTheme);
+            share.addEventListener('click', shareDeck);
+            startBtn && startBtn.addEventListener('click', () => go(1));
+
+            // deep link
+            const hash = parseInt(location.hash.replace('#', ''), 10);
+            if (!isNaN(hash) && hash >= 1 && hash <= slides.length) { go(hash - 1); } else { renderDots(0); }
+
+            // resize keeps slide alignment
+            addEventListener('resize', () => go(activeIndex()));
+        })();
+    </script>
+</body>
+
+</html>
+<!-- """
+path = "/mnt/data/camim_mobile_deck.html"
+with open(path, "w", encoding="utf-8") as f:
+f.write(mobile_html)
+
+path -->

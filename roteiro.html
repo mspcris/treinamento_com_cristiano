@@ -1,0 +1,441 @@
+<!-- # Create a clean single-file HTML with a fixed header that contains the navigation buttons.
+# The header height is measured dynamically to avoid overlap; clicking nav keeps header visible.
+html = r""" -->
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>CAMIM • Roteiro Falado (30 min) — Situações Delicadas</title>
+    <meta name="theme-color" content="#0b6b6f">
+    <style>
+        :root {
+            --brand: #0b6b6f;
+            --brand2: #0e878c;
+            --ink: #0f172a;
+            --muted: #475569;
+            --bg: #ffffff;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --hdr: 0px;
+            /* calculado em JS */
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial
+        }
+
+        /* Header fixo com navegação integrada */
+        .header {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, .98);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: saturate(180%) blur(8px);
+        }
+
+        .header .wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 10px 12px 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            flex: 0 0 auto
+        }
+
+        .ttl {
+            min-width: 0
+        }
+
+        .h1 {
+            margin: 0;
+            font-size: clamp(20px, 4.4vw, 28px);
+            font-weight: 800;
+            line-height: 1.1
+        }
+
+        .sub {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--ink);
+            padding: 6px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 0 3px rgba(14, 135, 140, .18)
+        }
+
+        /* Nav pills dentro do header, linha separada */
+        .navline {
+            border-top: 1px solid var(--border);
+        }
+
+        .tabs {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            overflow: auto;
+            scrollbar-width: none
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none
+        }
+
+        .pill {
+            white-space: nowrap;
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-size: 13px;
+            background: #fff;
+            cursor: pointer
+        }
+
+        .pill[aria-current="true"] {
+            background: var(--brand);
+            color: #fff;
+            border-color: transparent
+        }
+
+        /* Conteúdo compensa a altura do header fixo */
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: calc(var(--hdr) + 16px) 12px 16px
+        }
+
+        .section {
+            padding: 22px 4px;
+            border-bottom: 1px solid var(--border);
+            scroll-margin-top: calc(var(--hdr) + 8px)
+        }
+
+        .section h2 {
+            margin: 0 0 6px;
+            font-size: clamp(18px, 3.6vw, 26px)
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 10px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin: 10px 0;
+            box-shadow: 0 6px 24px rgba(2, 8, 23, .04)
+        }
+
+        ul,
+        ol {
+            margin: 8px 0 6px 20px
+        }
+
+        blockquote {
+            margin: 8px 0;
+            padding: 10px 12px;
+            background: #f1f5f9;
+            border-left: 4px solid var(--brand);
+            border-radius: 8px
+        }
+
+        .footer {
+            color: var(--muted);
+            padding: 14px 0 22px
+        }
+
+        /* Dark mode */
+        .dark {
+            --bg: #0b1220;
+            --ink: #e5e7eb;
+            --muted: #94a3b8;
+            --card: #0f172a;
+            --border: #1f2937;
+            --brand: #22c55e;
+            --brand2: #16a34a
+        }
+
+        /* Print */
+        @media print {
+
+            .header,
+            .navline,
+            .actions {
+                display: none !important
+            }
+
+            .container {
+                padding-top: 0
+            }
+
+            .section {
+                page-break-inside: avoid
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="wrap">
+            <div class="logo">C</div>
+            <div class="ttl">
+                <h1 class="h1">CAMIM — Roteiro Falado (30 min)</h1>
+                <div class="sub">Situações delicadas na recepção • foco humano • sem autoatendimento</div>
+            </div>
+            <div class="actions">
+                <button class="btn" id="theme">Tema</button>
+                <button class="btn" id="print">PDF</button>
+            </div>
+        </div>
+        <div class="navline">
+            <nav class="tabs" id="tabs" role="tablist" aria-label="Marcadores de tempo">
+                <button class="pill" data-target="s0">00–02 Abertura</button>
+                <button class="pill" data-target="s1">02–05 Contexto</button>
+                <button class="pill" data-target="s2">05–11 REAGIR</button>
+                <button class="pill" data-target="s3">11–16 Scripts</button>
+                <button class="pill" data-target="s4">16–21 Escalonar</button>
+                <button class="pill" data-target="s5">21–26 Lideranças</button>
+                <button class="pill" data-target="s6">26–29 Exercício</button>
+                <button class="pill" data-target="s7">29–30 Fechamento</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Sections -->
+        <section class="section" id="s0">
+            <h2>00:00–02:00 Abertura e alinhamento</h2>
+            <div class="meta">Objetivo: reduzir incidentes e retrabalho. Mensagens: segurança, respeito, empatia
+                econômica, alternativa concreta.</div>
+            <div class="card">
+                <strong>Texto sugerido</strong>
+                <blockquote>“Hoje o foco é prática de balcão: como reduzir atrito quando o cliente chega estressado,
+                    gritando ou frustrado. Em 30 minutos, três entregáveis: uma técnica simples, frases que funcionam e
+                    como escalar certo.”</blockquote>
+                <div class="meta">Pergunta rápida: “Quem lidou com grito no balcão na última semana?”</div>
+            </div>
+        </section>
+
+        <section class="section" id="s1">
+            <h2>02:00–05:00 Realidade CAMIM e por que há atrito</h2>
+            <div class="card">
+                <ul>
+                    <li>Picos de demanda, regras de convênio, informação clínica limitada na recepção.</li>
+                    <li>Em algumas unidades não há porteiro. A recepção é ‘porta’ e ‘filtro’.</li>
+                    <li>Atrasos de médico sem aviso ao público.</li>
+                    <li>Limites de agendamento na recepção.</li>
+                </ul>
+                <blockquote>“O estresse não é pessoal. É soma de espera, regra e incerteza. Nosso papel é tirar
+                    incerteza rápido e oferecer caminho viável.”</blockquote>
+                <div class="meta">Âncora: comunicar <strong>próximo passo + tempo</strong> em até 90s.</div>
+            </div>
+        </section>
+
+        <section class="section" id="s2">
+            <h2>05:00–11:00 Técnica central — REAGIR</h2>
+            <div class="card">
+                <ol>
+                    <li><strong>R</strong>eceber e nomear a emoção.</li>
+                    <li><strong>E</strong>xplicar contexto/regra simples.</li>
+                    <li><strong>A</strong>presentar <strong>duas</strong> opções viáveis agora.</li>
+                    <li><strong>G</strong>arantir próximo passo e tempo.</li>
+                    <li><strong>IR</strong> registrar e, se necessário, escalar.</li>
+                </ol>
+                <strong>Modelo completo</strong>
+                <blockquote>“Vejo que você está chateado. Para manter todos seguros, preciso validar este documento.
+                    Posso oferecer <em>A agora</em> ou <em>B hoje às __</em>. O que prefere? Sua chamada sai em cerca de
+                    <em>12 minutos</em>. Se não ficar bom, eu chamo meu líder.”
+                </blockquote>
+                <div class="meta">Dica: falar devagar, tom baixo, frases curtas.</div>
+            </div>
+        </section>
+
+        <section class="section" id="s3">
+            <h2>11:00–16:00 Scripts essenciais</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>Acolhimento</strong>: “Bom dia, meu nome é __. Como posso ajudar?”</li>
+                    <li><strong>Regra</strong>: “Para manter todos seguros, preciso __. Posso oferecer X ou Y.”</li>
+                    <li><strong>Negativa</strong>: “Não posso liberar sem __. Alternativas: A ou B.”</li>
+                    <li><strong>De-escalation</strong>: “Quero te ouvir. Com respeito, resolvemos mais rápido.”</li>
+                    <li><strong>Fechamento</strong>: “Aguarde na área A. Chamada em ~__ min.”</li>
+                </ul>
+                <div class="meta"><strong>Proibidos</strong>: sarcasmo, debate pessoal, prometer o que não controla,
+                    tocar no cliente.</div>
+            </div>
+        </section>
+
+        <section class="section" id="s4">
+            <h2>16:00–21:00 Escalonamento e segurança</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>N1 Frustração</strong>: aplicar REAGIR, registrar; se não melhorar em 3 min, chefe.</li>
+                    <li><strong>N2 Escalada verbal</strong>: limite de respeito, possível sala neutra; chefe presente;
+                        segurança de prontidão.</li>
+                    <li><strong>N3 Ameaça</strong>: interromper; gerente local e segurança.</li>
+                    <li><strong>N4 Agressão</strong>: protocolo de segurança; isolar equipe; autoridades conforme
+                        política.</li>
+                </ul>
+                <blockquote>“Quero ajudar, mas com respeito. Se continuar nesse tom, interrompo e chamo o responsável.”
+                </blockquote>
+                <div class="meta">Checklist pós-incidente: nível, fatos, ações, resultado, follow-up.</div>
+            </div>
+        </section>
+
+        <section class="section" id="s5">
+            <h2>21:00–26:00 Papel de chefia e gerente local</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>Chefe de recepção</strong>: presente nos picos, decide exceções, protege a equipe em
+                        N2+.</li>
+                    <li><strong>Gerente local</strong>: resposta N3/N4, debrief no dia, remove barreiras sistêmicas.
+                    </li>
+                </ul>
+                <blockquote>“Sou __, responsável pela recepção. Vou assumir. Alternativas agora: X ou Y.”</blockquote>
+                <div class="meta">Ritual: daily de 5 min com casos, tempos e alinhamento com segurança.</div>
+            </div>
+        </section>
+
+        <section class="section" id="s6">
+            <h2>26:00–29:00 Exercício rápido (opcional)</h2>
+            <div class="card">
+                <ul>
+                    <li>Dinâmica 1–3–1: 1 min aplica REAGIR, 3 min inverte, 1 min compartilhar.</li>
+                    <li>Prompts: “Cheguei no horário e não fui atendido”; “Não vou pagar taxa”; “Quero entrar em área
+                        restrita”.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section" id="s7">
+            <h2>29:00–30:00 Fechamento e CTA</h2>
+            <div class="card">
+                <ul>
+                    <li>Resumo: segurança, respeito, 90s para <strong>próximo passo + tempo</strong>, duas opções,
+                        escalonar certo.</li>
+                    <li>A partir do próximo turno: usar REAGIR e registrar N2+.</li>
+                    <li>Chefes/gerentes: revisar guardrails e tempo de fila comunicado.</li>
+                </ul>
+                <blockquote>“Se todo cliente sai sabendo <em>o que acontece e quando</em>, o atrito cai. Vamos operar
+                    assim a partir de hoje.”</blockquote>
+            </div>
+        </section>
+
+        <div class="footer">HTML estático • header fixo com navegação • mobile-first • pronto para impressão</div>
+    </main>
+
+    <script>
+        (function () {
+            const root = document.documentElement;
+            const header = document.getElementById('header');
+            const printBtn = document.getElementById('print');
+            const themeBtn = document.getElementById('theme');
+            const pills = Array.from(document.querySelectorAll('.pill'));
+            const sections = Array.from(document.querySelectorAll('.section'));
+
+            function setHdr() {
+                root.style.setProperty('--hdr', header.offsetHeight + 'px');
+                // atualiza scroll-margin-top já que usa var(--hdr)
+                sections.forEach(s => s.style.scrollMarginTop = `calc(${getComputedStyle(root).getPropertyValue('--hdr')} + 8px)`);
+            }
+            setHdr();
+            addEventListener('resize', setHdr);
+            new ResizeObserver(setHdr).observe(header);
+
+            function to(id) {
+                const el = document.getElementById(id);
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); history.replaceState(null, '', '#' + id); }
+                pills.forEach(p => p.removeAttribute('aria-current'));
+                document.querySelectorAll(`.pill[data-target="${id}"]`).forEach(x => x.setAttribute('aria-current', 'true'));
+                // garantir que a pílula selecionada fique visível na barra
+                const sel = document.querySelector(`.pill[data-target="${id}"]`);
+                sel && sel.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            pills.forEach(p => p.addEventListener('click', () => to(p.dataset.target)));
+            printBtn.addEventListener('click', () => window.print());
+            themeBtn.addEventListener('click', () => document.body.classList.toggle('dark'));
+
+            // Observa a seção visível para sincronizar aria-current
+            const io = new IntersectionObserver(entries => {
+                const v = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+                if (v) {
+                    const id = v.target.id;
+                    pills.forEach(p => p.removeAttribute('aria-current'));
+                    document.querySelectorAll(`.pill[data-target="${id}"]`).forEach(x => x.setAttribute('aria-current', 'true'));
+                }
+            }, { threshold: [0.6] });
+            sections.forEach(s => io.observe(s));
+
+            // Deep link
+            const hash = location.hash.replace('#', '');
+            if (hash && document.getElementById(hash)) to(hash);
+
+            // Atalhos 1–8, T, P
+            document.addEventListener('keydown', e => {
+                if (e.key >= '1' && e.key <= '8') { const idx = parseInt(e.key, 10) - 1; const id = ['s0', 's1', 's2', 's3', 's4', 's5', 's6', 's7'][idx]; to(id); }
+                if (e.key.toLowerCase() === 't') document.body.classList.toggle('dark');
+                if (e.key.toLowerCase() === 'p') window.print();
+            });
+        })();
+    </script>
+</body>
+
+</html>
+<!-- """
+path = "/mnt/data/camim_roteiro_header_fixo.html"
+with open(path, "w", encoding="utf-8") as f:
+f.write(html)
+
+path -->

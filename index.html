@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>CAMIM • Abertura e Espera</title>
+    <meta name="theme-color" content="#0b6b6f">
+    <style>
+        :root {
+            --dur: 28s;
+            --ease: cubic-bezier(.2, .6, .2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: #000;
+            color: #e5e7eb;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial
+        }
+
+        .app {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            background: #000
+        }
+
+        /* Logo fixo no alto à esquerda */
+        .logo {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 30;
+            display: inline-grid;
+            place-items: center;
+            padding: 6px 10px;
+            gap: 8px;
+            background: rgba(0, 0, 0, .45);
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 12px;
+            backdrop-filter: saturate(180%) blur(8px);
+        }
+
+        .logo img {
+            height: 26px;
+            width: auto;
+            display: block
+        }
+
+        /* Controles */
+        .hud {
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            z-index: 30;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, .45);
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 12px;
+            padding: 6px 8px;
+            backdrop-filter: saturate(180%) blur(8px);
+        }
+
+        button {
+            appearance: none;
+            border: 1px solid rgba(255, 255, 255, .25);
+            background: rgba(0, 0, 0, .35);
+            color: #fff;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 13px
+        }
+
+        button:active {
+            transform: scale(.98)
+        }
+
+        /* ===== MODO 1: SLIDES COM ENTRADAS DIFERENTES ===== */
+        .slides {
+            position: absolute;
+            inset: 0;
+            overflow: hidden
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: translate3d(0, 0, 0) scale(1.05);
+            animation: show var(--dur) var(--ease) infinite both;
+            will-change: transform, opacity;
+        }
+
+        .slide img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            /* pode cortar para preencher */
+            filter: brightness(.98) contrast(1.02) saturate(1.05);
+        }
+
+        @keyframes show {
+
+            0%,
+            2% {
+                opacity: 0
+            }
+
+            5% {
+                opacity: .12;
+                transform: translate3d(var(--in-x, 0), var(--in-y, 0), 0) scale(1.05)
+            }
+
+            12% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1)
+            }
+
+            20% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1.04)
+            }
+
+            24% {
+                opacity: .75;
+                transform: translate3d(var(--out-x, 0), var(--out-y, 0), 0) scale(1.02)
+            }
+
+            25%,
+            100% {
+                opacity: 0
+            }
+        }
+
+        /* ===== MODO 2: COLAGEM PANORÂMICA (SEM CORTE) ===== */
+        .collage {
+            position: absolute;
+            inset: 0;
+            display: none;
+            /* alternado via JS */
+            overflow: hidden;
+            background: #000;
+        }
+
+        .viewport {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            /* janela de visualização */
+        }
+
+        .canvas {
+            /* Painel maior que a tela; “câmera” passeia por ele */
+            position: absolute;
+            width: 220vw;
+            height: 220vh;
+            /* maior que viewport para pan amplo */
+            left: -60vw;
+            top: -60vh;
+            /* centralizado */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 4px;
+            animation: pan var(--dur) linear infinite;
+            will-change: transform;
+        }
+
+        .tile {
+            position: relative;
+            width: 100%;
+            height: 100%
+        }
+
+        .tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+            /* sem corte */
+        }
+
+        @keyframes pan {
+            0% {
+                transform: translate3d(0, 0, 0) scale(1)
+            }
+
+            20% {
+                transform: translate3d(-12vw, -6vh, 0) scale(1.06)
+            }
+
+            40% {
+                transform: translate3d(8vw, -14vh, 0) scale(1.02)
+            }
+
+            60% {
+                transform: translate3d(14vw, 12vh, 0) scale(1.08)
+            }
+
+            80% {
+                transform: translate3d(-10vw, 8vh, 0) scale(1.04)
+            }
+
+            100% {
+                transform: translate3d(0, 0, 0) scale(1)
+            }
+        }
+
+        /* Estado de pausa */
+        .paused .slides .slide,
+        .paused .collage .canvas {
+            animation-play-state: paused
+        }
+
+        /* Responsivo */
+        @media (min-width:900px) {
+            .logo img {
+                height: 30px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app" id="app">
+        <!-- Modo 1: Slides -->
+        <div class="slides" id="slides">
+            <figure class="slide"><img src="images/central2.jpg" alt=""></figure>
+            <figure class="slide"><img src="images/pv_g2.jpg" alt=""></figure>
+            <figure class="slide"><img src="images/rcp_a2.jpg" alt=""></figure>
+            <figure class="slide"><img src="images/rcp_n2.jpg" alt=""></figure>
+            <figure class="slide"><img src="images/rcp_b2.jpg" alt=""></figure>
+            <figure class="slide"><img src="images/enf_g2.png" alt=""></figure>
+        </div>
+
+        <!-- Modo 2: Colagem panorâmica (2x2) -->
+        <div class="collage" id="collage">
+            <div class="viewport">
+                <div class="canvas">
+                    <div class="tile"><img src="images/central2.jpg" alt=""></div>
+                    <div class="tile"><img src="images/pv_g2.jpg" alt=""></div>
+                    <div class="tile"><img src="images/rcp_a2.jpg" alt=""></div>
+                    <div class="tile"><img src="images/rcp_n2.jpg" alt=""></div>
+                    <div class="tile"><img src="images/rcp_b2.jpg" alt=""></div>
+                    <div class="tile"><img src="images/enf_g2.png" alt=""></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logo no alto à esquerda -->
+    <div class="logo">
+        <a href="apresentacao.html"> <img src="images/Logo Camim-01_200px.png" alt="CAMIM"></a>
+    </div>
+
+    <!-- Controles -->
+    <div class="hud">
+        <button id="mode">Colagem</button>
+        <button id="pause">Pausar</button>
+        <button id="fs">Tela cheia</button>
+    </div>
+
+    <script>
+        (function () {
+            // Direções por slide para entradas diferentes
+            const slides = Array.from(document.querySelectorAll('.slide'));
+            const dirs = [
+                { in: '-9vw,0', out: '9vw,0' },
+                { in: '9vw,0', out: '-9vw,0' },
+                { in: '0,9vh', out: '0,-9vh' },
+                { in: '0,-9vh', out: '0,9vh' },
+                { in: '-7vw,7vh', out: '7vw,-7vh' }
+            ];
+            const dur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dur')) || 28;
+
+            slides.forEach((el, i) => {
+                const d = dirs[i % dirs.length];
+                el.style.setProperty('--in-x', d.in.split(',')[0]); el.style.setProperty('--in-y', d.in.split(',')[1]);
+                el.style.setProperty('--out-x', d.out.split(',')[0]); el.style.setProperty('--out-y', d.out.split(',')[1]);
+                el.style.animationDuration = dur + 's';
+                el.style.animationDelay = `-${(i * (dur / slides.length)).toFixed(3)}s`;
+            });
+
+            // Pausar/retomar
+            const app = document.getElementById('app');
+            const pauseBtn = document.getElementById('pause');
+            let paused = false;
+            function setPaused(p) {
+                paused = p; document.body.classList.toggle('paused', p);
+                pauseBtn.textContent = p ? 'Retomar' : 'Pausar';
+            }
+            app.addEventListener('click', () => setPaused(!paused), { passive: true });
+            pauseBtn.addEventListener('click', () => setPaused(!paused));
+
+            // Tela cheia
+            const fs = document.getElementById('fs');
+            fs.addEventListener('click', () => {
+                const el = document.documentElement;
+                if (!document.fullscreenElement) { el.requestFullscreen?.(); } else { document.exitFullscreen?.(); }
+            });
+
+            // Alternar modos
+            const modeBtn = document.getElementById('mode');
+            const slidesEl = document.getElementById('slides');
+            const collageEl = document.getElementById('collage');
+            let collage = false;
+            function setMode(useCollage) {
+                collage = useCollage;
+                slidesEl.style.display = collage ? 'none' : 'block';
+                collageEl.style.display = collage ? 'block' : 'none';
+                modeBtn.textContent = collage ? 'Slides' : 'Colagem';
+            }
+            modeBtn.addEventListener('click', () => setMode(!collage));
+            setMode(false); // começa em Slides
+        })();
+    </script>
+</body>
+
+</html>
