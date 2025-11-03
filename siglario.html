@@ -1,34 +1,195 @@
-Outcome - Consequência
+<!doctype html>
+<html lang="pt-br">
 
-FCR - First Call Resolution (ou Resolução no Primeiro Contato/Chamado)
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Siglário — Leitura Simples</title>
+    <meta name="theme-color" content="#0b6b6f">
+    <style>
+        :root {
+            --brand: #0b6b6f;
+            --ink: #0f172a;
+            --muted: #475569;
+            --bg: #ffffff;
+            --soft: #f8fafc;
+            --line: #e2e8f0;
+        }
 
-N1, N2, N3, N4 - Níveis de atendimento
+        * {
+            box-sizing: border-box
+        }
 
-SLA - É a sigla para Service Level Agreement (em português, Acordo de Nível de Serviço ou ANS).
-Em termos simples, é um contrato ou um documento que define as expectativas e responsabilidades entre um prestador de
-serviços e um cliente.
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial
+        }
 
-Throughput - É uma métrica que representa a quantidade efetiva de dados ou itens que um sistema consegue transferir ou
-processar em um determinado intervalo de tempo
+        .wrap {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 20px 16px 32px
+        }
 
-Debrief - É uma análise ou avaliação detalhada realizada após a conclusão de uma atividade, projeto, campanha ou evento.
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--line);
+            padding: 14px 16px;
+            margin: 0 -16px 16px;
+            z-index: 1
+        }
 
-Wayfinding - é o processo (e o sistema que o suporta) pelo qual as pessoas se orientam no espaço físico e encontram o
-caminho para o seu destino. Em termos simples, é a arte e a ciência de ajudar as pessoas a saber onde estão, para onde
-podem ir e como chegar lá.
+        h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.01em
+        }
 
-CSAT - O CSAT (Customer Satisfaction Score, ou Pontuação de Satisfação do Cliente) é uma métrica simples e direta usada
-para medir o nível de contentamento de um cliente com uma interação, produto ou serviço específico da sua empresa.
+        .card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin: 12px 0;
+            box-shadow: 0 6px 22px rgba(2, 8, 23, .04)
+        }
 
-Absenteísmo - É um termo que se refere à ausência frequente ou habitual de um profissional do seu local de trabalho,
-incluindo faltas, atrasos e saídas antecipadas.
+        .term {
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            font-size: 16px
+        }
 
-Role-play - É uma técnica de simulação onde as pessoas "encenam" uma situação real para praticar e treinar habilidades
-em um ambiente seguro.
+        .txt {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 15px;
+            white-space: pre-wrap
+        }
 
-Baseline - Ou linha de base em português, é um ponto de partida ou um padrão de referência estabelecido e aprovado que
-serve para medir, monitorar e comparar o progresso ou desempenho de um projeto, processo ou sistema ao longo do tempo.
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0b1220;
+                --ink: #e5e7eb;
+                --muted: #94a3b8;
+                --soft: #0f172a;
+                --line: #1f2937;
+                --brand: #22c55e
+            }
 
-Guardrails - Em administração, "guardrails" (termo em inglês para "guarda-corpos" ou "barreiras de proteção") referem-se
-a limites, regras e mecanismos de controle que orientam a tomada de decisões e as ações das equipes, garantindo que
-permaneçam dentro de parâmetros seguros, éticos e alinhados aos objetivos estratégicos da organização.
+            .card {
+                background: #0f172a;
+                box-shadow: none
+            }
+
+            header {
+                background: #0b1220
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Siglário — Leitura Simples</h1>
+        </header>
+
+        <section class="card">
+            <h2 class="term">Outcome - Consequência</h2>
+            <p class="txt">Outcome - Consequência</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">FCR - First Call Resolution</h2>
+            <p class="txt">FCR - First Call Resolution (ou Resolução no Primeiro Contato/Chamado)</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">N1, N2, N3, N4 - Níveis de atendimento</h2>
+            <p class="txt">N1, N2, N3, N4 - Níveis de atendimento</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">SLA</h2>
+            <p class="txt">SLA - É a sigla para Service Level Agreement (em português, Acordo de Nível de Serviço ou
+                ANS).
+                Em termos simples, é um contrato ou um documento que define as expectativas e responsabilidades entre um
+                prestador de
+                serviços e um cliente.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Throughput</h2>
+            <p class="txt">Throughput - É uma métrica que representa a quantidade efetiva de dados ou itens que um
+                sistema consegue transferir ou
+                processar em um determinado intervalo de tempo</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Debrief</h2>
+            <p class="txt">Debrief - É uma análise ou avaliação detalhada realizada após a conclusão de uma atividade,
+                projeto, campanha ou evento.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Wayfinding</h2>
+            <p class="txt">Wayfinding - é o processo (e o sistema que o suporta) pelo qual as pessoas se orientam no
+                espaço físico e encontram o
+                caminho para o seu destino. Em termos simples, é a arte e a ciência de ajudar as pessoas a saber onde
+                estão, para onde
+                podem ir e como chegar lá.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">CSAT</h2>
+            <p class="txt">CSAT - O CSAT (Customer Satisfaction Score, ou Pontuação de Satisfação do Cliente) é uma
+                métrica simples e direta usada
+                para medir o nível de contentamento de um cliente com uma interação, produto ou serviço específico da
+                sua empresa.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Absenteísmo</h2>
+            <p class="txt">Absenteísmo - É um termo que se refere à ausência frequente ou habitual de um profissional do
+                seu local de trabalho,
+                incluindo faltas, atrasos e saídas antecipadas.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Role-play</h2>
+            <p class="txt">Role-play - É uma técnica de simulação onde as pessoas "encenam" uma situação real para
+                praticar e treinar habilidades
+                em um ambiente seguro.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Baseline</h2>
+            <p class="txt">Baseline - Ou linha de base em português, é um ponto de partida ou um padrão de referência
+                estabelecido e aprovado que
+                serve para medir, monitorar e comparar o progresso ou desempenho de um projeto, processo ou sistema ao
+                longo do tempo.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="term">Guardrails</h2>
+            <p class="txt">Guardrails - Em administração, "guardrails" (termo em inglês para "guarda-corpos" ou
+                "barreiras de proteção") referem-se
+                a limites, regras e mecanismos de controle que orientam a tomada de decisões e as ações das equipes,
+                garantindo que
+                permaneçam dentro de parâmetros seguros, éticos e alinhados aos objetivos estratégicos da organização.
+            </p>
+        </section>
+
+    </div>
+</body>
+
+</html>
